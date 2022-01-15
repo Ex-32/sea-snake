@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+# OS cache/config files
+.DS_Store
+desktop.ini
+
+# Editor cache/config files
+*.code-workspace
+
+# Editor cache/config directories
+.vs
+.vscode
+
+# Build directories
+build
+build-debug
+out
