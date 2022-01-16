@@ -8,7 +8,7 @@
 #include <chrono> // for std::chrono::steady_clock() and std::chrono::duration<>
 #include <thread> // for std::this_thread::sleep_until()
 
-// for initscr(), curs_set(), keypad(), noecho(), and nodelay()
+// for setlocale, initscr(), curs_set(), keypad(), noecho(), and nodelay()
 #include <ncurses.h>
 
 #include "draw.h"

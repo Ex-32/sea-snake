@@ -11,6 +11,7 @@ int main() {
     typedef std::chrono::duration<int,std::milli> millisec_type;
 
     // init screen and set up screen
+    //setlocale(LC_ALL, ""); // enable unicode support
     initscr();             // initialize screen
     curs_set(0);           // hide cursor
     keypad(stdscr, TRUE);  // enable keypad (arrow key) support

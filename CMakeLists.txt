@@ -6,14 +6,14 @@ project("sea-snake")
 set(CMAKE_CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED)
 
-# find ncurses library on system
-find_library(NCURSES_LIB ncurses)
+# find ncursesw library on system
+find_library(NCURSESW_LIB ncursesw)
 
 # add sea-snake executable
 add_executable(sea-snake "main.cpp" "draw.cpp" "game_tick.cpp" "misc.cpp")
 
 # add ncurses library to sea-snake
-target_link_libraries(sea-snake PRIVATE "${NCURSES_LIB}")
+target_link_libraries(sea-snake PRIVATE "${NCURSESW_LIB}")
 
 # add warning and optimization flags
 target_compile_options(sea-snake PRIVATE
