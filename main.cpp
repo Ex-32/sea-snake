@@ -1,51 +1,30 @@
 
-#define VERSION 0.0.0
+#define VERSION 1.0.0
 #include "main.h"
 
-void nc_exit(int exitcode) {
-    endwin(); // deallocates memory and ends ncurses
-    std::exit(exitcode);
-}
-
-void SIGINT_handler(int sig) {
-    nc_exit(sig);
-}
-
-void game_size_init(void) {
-    int x{};
-    int y{};
-    getmaxyx(stdscr,y,x);
-    g_game_hight = y;
-    if (g_game_width % 2 == 0) {
-        g_game_width = (x/2);
-    } else {
-        g_game_width = ((x-1)/2);
-    }
-}
-
 int main() {
-    std::signal(SIGINT, SIGINT_handler);
+    // catch ^C and cleanly exit
+    std::signal(SIGINT, nc_exit);
 
-    // init screen and sets up screen
-    initscr();
-    //curs_set(0);
-    keypad(stdscr, TRUE);
-    game_size_init();
+    // init screen and set up screen
+    initscr();             // initialize screen
+    curs_set(0);           // hide cursor
+    keypad(stdscr, TRUE);  // enable keypad (arrow key) support
+    cbreak();              // disable line buffering
+    noecho();              // disable echoing back input
+    nodelay(stdscr, TRUE); // make getch() calls non-blocking
 
-    // pause the screen output
-    getch();
+    // initialize the game state
+    Game_State current_state = game_state_init();
 
-    int keycode{};
-    while (1) {
-        keycode = key_from_queue();
-        if (keycode > 0) {
-            printw("Key pressed! It was: %d\n", keycode);
-            refresh();
-        } else {
-            printw("No key pressed yet...\n");
-            refresh();
-            sleep(1);
-        }
+
+    while (true) {
+        // get user input and update state
+        current_state = do_game_tick(current_state);
+        // draw the game state in the window
+        draw_frame(current_state);
+        // Zzz...
+        sleep_milli(current_state.speed);
     }
 
     nc_exit(0);

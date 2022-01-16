@@ -16,11 +16,6 @@
 #include "misc.h"
 #include "global_structs.h"
 
-void nc_exit(int signum);
-void SIGINT_handler(int sig);
-
-void game_size_init(void);
-
 int main();
 
 #endif

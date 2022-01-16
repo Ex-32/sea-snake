@@ -3,19 +3,20 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <chrono> // used in sleep() and sleep_milli()
-#include <thread> // used in sleep() and sleep_milli()
-
+#include <chrono> // used sleep_milli()
+#include <thread> // used sleep_milli()
 #include <random> // used in random_int()
 
-#include <vector> // used in Game_State
+#include <ncurses.h> // used in nc_exit()
 
-extern int g_game_width;
-extern int g_game_hight;
+#include "global_structs.h"
 
-void sleep(int seconds);
+void nc_exit(int exitcode);
+
 void sleep_milli(int milliseconds);
 
 int random_int(int lower_bound, int upper_bound);
+
+bool same_point2d_int(Point2d_int a, Point2d_int b);
 
 #endif

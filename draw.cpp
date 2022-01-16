@@ -1,32 +1,29 @@
 #include "draw.h"
 
-void reset_screen(void) {
-    clear();
-    move(0,0);
-}
-
+// prints string (designed to be 2 chars long) at x*2, y
 void print_point(Point2d_int point, const char* str) {
     mvprintw(point.y,(point.x*2),str);
 }
 
-void draw_frame(Game_State* current_state) {
+// draw the snake and fruit from a Game_State struct
+void draw_frame(Game_State current_state) {
     clear();
 
-    int snake_len = current_state -> snake_body.size();
-    for (int i{0}; i < snake_len; ++i) {
-        print_point(current_state -> snake_body[i],"##");
+    // prints a "##" in every "tile" of the snake_body list
+    for (const auto& snake_segment : (current_state.snake_body)) {
+        print_point(snake_segment,"##");
     }
+
+    // prints a "@@" in the "tile" of the fruit
+    print_point((current_state.fruit),"@@");
 
     refresh();
 
 }
 
-void draw_start() {
-    reset_screen();
+// // TODO: add start and death screens
+// void draw_start() {
+// }
 
-}
-
-void draw_death() {
-    reset_screen();
-
-}
+// void draw_death() {
+// }

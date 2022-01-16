@@ -1,10 +1,8 @@
 #include "misc.h"
 
-int g_game_width {};
-int g_game_hight {};
-
-void sleep(int seconds) {
-    std::this_thread::sleep_for(std::chrono::milliseconds((seconds*1000)));
+void nc_exit(int exitcode) {
+    endwin(); // deallocates memory and ends ncurses
+    std::exit(exitcode);
 }
 
 void sleep_milli(int milliseconds) {
@@ -16,4 +14,9 @@ int random_int(int lower_bound, int upper_bound) {
     static std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> generator(lower_bound,upper_bound);
     return generator(rng);
+}
+
+bool same_point2d_int(Point2d_int a, Point2d_int b) {
+    if ((a.x == b.x) && (a.y == b.y)) return true;
+    else return false;
 }
