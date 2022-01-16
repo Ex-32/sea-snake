@@ -11,11 +11,14 @@
 // for setlocale, initscr(), curs_set(), keypad(), noecho(), and nodelay()
 #include <ncurses.h>
 
+// for parsing command line arguments
+#include "tclap/CmdLine.h"
+
 #include "draw.h"
 #include "game_tick.h"
 #include "misc.h"
 #include "global_structs.h"
 
-int main();
+int main(int argc, char *argv[]);
 
 #endif

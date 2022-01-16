@@ -46,7 +46,7 @@ Game_State game_state_init(void) {
     };
 
     // set the starting game speed to one frame per 350ms
-    current_state.speed = 350;
+    current_state.speed = g_arg_speed;
 
     return current_state;
 
@@ -108,7 +108,9 @@ void do_game_tick(Game_State& current_state) {
             random_int(0,current_state.game_width-1),
             random_int(0,current_state.game_height-1)
         };
-        if (current_state.speed > 150) current_state.speed -= 10;
+        if (current_state.speed > g_arg_max_speed) {
+            current_state.speed -= g_arg_increment;
+        }
     }
 
     // compares actual size of snake to to correct snake length and pops body
@@ -129,7 +131,7 @@ void do_game_tick(Game_State& current_state) {
     for (const auto& snake_segment : (current_state.snake_body)) {
         if (same_point2d_int(new_head,snake_segment)) {
             // TODO: go to death screen instead
-            nc_exit(0); // exit program with exit code 0
+            death(current_state.snake_length); //print and final score and exit
         }
     }
     // if the new head is outside the bounds, the snake is dead
@@ -140,7 +142,7 @@ void do_game_tick(Game_State& current_state) {
         new_head.y < 0
     ) {
         // TODO: go to death screen instead
-        nc_exit(0); // exit program with exit code 0
+        death(current_state.snake_length); //print and final score and exit
     }
 
     // attach the new head to the front of the snake

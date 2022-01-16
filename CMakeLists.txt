@@ -10,7 +10,10 @@ set(CXX_STANDARD_REQUIRED)
 find_library(NCURSESW_LIB ncursesw)
 
 # add sea-snake executable
-add_executable(sea-snake "main.cpp" "draw.cpp" "game_tick.cpp" "misc.cpp")
+add_executable(sea-snake "./src/main.cpp" "./src/draw.cpp" "./src/game_tick.cpp" "./src/misc.cpp")
+
+# add local include folder to nprimes target
+target_include_directories(sea-snake PRIVATE "./include")
 
 # add ncurses library to sea-snake
 target_link_libraries(sea-snake PRIVATE "${NCURSESW_LIB}")

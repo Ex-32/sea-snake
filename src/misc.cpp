@@ -5,6 +5,12 @@ void nc_exit(int exitcode) {
     std::exit(exitcode);
 }
 
+void death(int score) {
+    endwin(); // deallocates memory and ends ncurses
+    std::cout << "Your score was: " << score << std::endl; // prints exit message
+    std::exit(0);
+}
+
 int random_int(int lower_bound, int upper_bound) {
     static std::random_device dev;
     static std::mt19937 rng(dev());
