@@ -11,7 +11,7 @@ extern WINDOW *stdscr;
 
 void print_point(Point2d_int point, const char* str_print);
 
-void draw_frame(Game_State current_game_state);
+void draw_frame(const Game_State& current_state);
 
 // // TODO: add start and death screens
 // void draw_start();

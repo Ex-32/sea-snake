@@ -14,6 +14,6 @@ extern WINDOW *stdscr;
 
 int key_from_queue(void);
 Game_State game_state_init(void);
-Game_State do_game_tick(Game_State current_state);
+void do_game_tick(Game_State& current_state);
 
 #endif

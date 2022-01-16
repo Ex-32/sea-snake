@@ -20,7 +20,7 @@ int main() {
 
     while (true) {
         // get user input and update state
-        current_state = do_game_tick(current_state);
+        do_game_tick(current_state);
         // draw the game state in the window
         draw_frame(current_state);
         // Zzz...

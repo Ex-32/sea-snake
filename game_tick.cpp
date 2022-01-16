@@ -52,7 +52,7 @@ Game_State game_state_init(void) {
 
 }
 
-Game_State do_game_tick(Game_State current_state) {
+void do_game_tick(Game_State& current_state) {
 
     // gets direction that snake is facing from keystrokes
     // loops though keystrokes from the queue until there are no keycodes in
@@ -145,5 +145,4 @@ Game_State do_game_tick(Game_State current_state) {
     // attach the new head to the front of the snake
     current_state.snake_body.emplace_front(new_head);
 
-    return current_state;
 }
