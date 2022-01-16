@@ -8,6 +8,8 @@
 
 #include <string>
 #include <iostream>
+#include <chrono> // for std::chrono::steady_clock() and std::chrono::duration<>
+#include <thread> // for std::this_thread::sleep_until()
 
 #include <ncurses.h>
 

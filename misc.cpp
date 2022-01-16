@@ -5,10 +5,6 @@ void nc_exit(int exitcode) {
     std::exit(exitcode);
 }
 
-void sleep_milli(int milliseconds) {
-    std::this_thread::sleep_for(std::chrono::milliseconds((milliseconds)));
-}
-
 int random_int(int lower_bound, int upper_bound) {
     static std::random_device dev;
     static std::mt19937 rng(dev());
