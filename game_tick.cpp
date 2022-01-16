@@ -45,8 +45,8 @@ Game_State game_state_init(void) {
         random_int(0,current_state.game_height-1)
     };
 
-    // set the starting game speed to one frame per 700ms ()
-    current_state.speed = 450;
+    // set the starting game speed to one frame per 350ms
+    current_state.speed = 350;
 
     return current_state;
 
@@ -108,6 +108,7 @@ void do_game_tick(Game_State& current_state) {
             random_int(0,current_state.game_width-1),
             random_int(0,current_state.game_height-1)
         };
+        if (current_state.speed > 150) current_state.speed -= 10;
     }
 
     // compares actual size of snake to to correct snake length and pops body
