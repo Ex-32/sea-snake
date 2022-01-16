@@ -5,7 +5,7 @@ Sea-Snake is a command-line implementation of the classic game "snake" written i
 Ensure you have ncurses installed, if not:
 ```bash
 # install with apt (Ubuntu/Debian):
-sudo apt-get install libncurses5-dev libncursesw5-dev
+sudo apt-get install libncurses-dev
 
 # install with Homebrew (Mac):
 brew install ncurses
