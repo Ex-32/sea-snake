@@ -7,7 +7,7 @@ void print_point(Point2d_int point, const char* str) {
 
 // draw the snake and fruit from a Game_State struct
 void draw_frame(const Game_State& current_state) {
-    clear();
+    erase();
 
     // prints a "##" in every "tile" of the snake_body list
     for (const auto& snake_segment : (current_state.snake_body)) {
