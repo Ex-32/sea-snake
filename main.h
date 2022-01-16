@@ -3,11 +3,12 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <csignal>
+#include <csignal> // for std::signal()
 
 #include <chrono> // for std::chrono::steady_clock() and std::chrono::duration<>
 #include <thread> // for std::this_thread::sleep_until()
 
+// for initscr(), curs_set(), keypad(), noecho(), and nodelay()
 #include <ncurses.h>
 
 #include "draw.h"

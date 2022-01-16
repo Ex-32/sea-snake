@@ -5,6 +5,7 @@
 
 #include <list>
 
+// for getmaxyx() and getch()
 #include <ncurses.h>
 
 #include "misc.h"

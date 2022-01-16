@@ -3,9 +3,10 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <random> // used in random_int()
+// for std::random_device, std::mt19937, std::uniform_int_distribution<>
+#include <random>
 
-#include <ncurses.h> // used in nc_exit()
+#include <ncurses.h> // for endwin()
 
 #include "global_structs.h"
 

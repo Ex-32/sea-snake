@@ -3,7 +3,7 @@
 #ifndef DRAW_H
 #define DRAW_H
 
-#include <ncurses.h>
+#include <ncurses.h> // for mvprintw(), erase(), and refresh()
 
 #include "global_structs.h"
 
