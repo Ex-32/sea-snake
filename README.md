@@ -1,7 +1,7 @@
 # Sea-Snake
 Sea-Snake is a command-line implementation of the classic game "snake" written in C++ using the ncurses library, the name is a play on the language name as it was created as approachable project for me to start to learn C++.
 
-It should compile with no issue on linux and mac assuming you have `cmake` and `ncurses` installed, i got it to compile on windows with cygwin, but that's up to you.
+It should compile with no issue on linux and mac assuming you have `cmake` and `ncurses` installed, i got v1.0.0 to compile on windows with cygwin, but that's up to you.
 
 ## compilation instructions:
 Ensure you have ncurses and cmake installed, if not:
