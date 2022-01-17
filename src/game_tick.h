@@ -10,10 +10,12 @@
 
 #include "misc.h"
 #include "global_structs.h"
+#include "draw.h"
 
 extern WINDOW *stdscr;
 
 int key_from_queue(void);
+void await_key(void);
 Game_State game_state_init(void);
 void do_game_tick(Game_State& current_state);
 

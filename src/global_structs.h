@@ -7,7 +7,7 @@
 
 // these are declred at the top of main.cpp
 extern bool g_arg_wide_mode;
-extern bool g_arg_menu;
+extern bool g_arg_skip_menu;
 extern int g_arg_speed;
 extern int g_arg_increment;
 extern int g_arg_max_speed;

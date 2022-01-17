@@ -1,5 +1,16 @@
 #include "game_tick.h"
 
+// holds the program in blocks of 200ms until a key is pressed
+void await_key(void) {
+    // while no keystroke new keycode every 200ms, return on keystroke
+    int keycode{};
+    while (true) {
+        keycode = key_from_queue();
+        if (keycode >= 0) return;
+        sleep_milli(200);
+    }
+}
+
 // gets key code from the queue, returns keycode if there is one, otherwise -1
 int key_from_queue(void) {
     int keycode {getch()};
@@ -130,8 +141,10 @@ void do_game_tick(Game_State& current_state) {
     // the snake is dead
     for (const auto& snake_segment : (current_state.snake_body)) {
         if (same_point2d_int(new_head,snake_segment)) {
-            // TODO: go to death screen instead
-            death(current_state.snake_length); //print and final score and exit
+            if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
+            else {
+                draw_death(current_state);
+            }
         }
     }
     // if the new head is outside the bounds, the snake is dead
@@ -141,8 +154,10 @@ void do_game_tick(Game_State& current_state) {
         new_head.y > current_state.game_height-1 ||
         new_head.y < 0
     ) {
-        // TODO: go to death screen instead
-        death(current_state.snake_length); //print and final score and exit
+        if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
+        else {
+            draw_death(current_state);
+        }
     }
 
     // attach the new head to the front of the snake

@@ -3,7 +3,7 @@
 #include "main.h"
 
 bool g_arg_wide_mode{};
-bool g_arg_menu{};
+bool g_arg_skip_menu{};
 int g_arg_speed{};
 int g_arg_increment{};
 int g_arg_max_speed{};
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 
         //store parsed command line args in global variables
         g_arg_wide_mode = wide_mode.getValue();
-        g_arg_menu = menu.getValue();
+        g_arg_skip_menu = menu.getValue();
         g_arg_speed = speed.getValue();
         g_arg_increment = increment.getValue();
         g_arg_max_speed = max_speed.getValue();
@@ -93,12 +93,12 @@ int main(int argc, char *argv[]) {
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
 
-    if (!g_arg_menu) {
-        // TODO display start menu
-    }
-
     // initialize the game state
     Game_State current_state = game_state_init();
+
+    if (g_arg_skip_menu == false) {
+        draw_start(current_state);
+    }
 
     // select wide mode loop or ascii loop
     if (g_arg_wide_mode) {
