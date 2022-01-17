@@ -4,13 +4,13 @@ Sea-Snake is a command-line implementation of the classic game "snake" written i
 It should compile with no issue on linux and mac assuming you have `cmake` and `ncurses` installed, i got it to compile on windows with cygwin, but that's up to you.
 
 ## compilation instructions:
-Ensure you have ncurses installed, if not:
+Ensure you have ncurses and cmake installed, if not:
 ```bash
 # install with apt (Ubuntu/Debian):
-sudo apt-get install libncurses-dev
+sudo apt-get install libncurses-dev cmake
 
 # install with Homebrew (Mac):
-brew install ncurses
+brew install ncurses cmake
 
 # or some other way...
 ```
