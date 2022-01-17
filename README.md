@@ -23,3 +23,9 @@ cd build
 cmake ..
 make
 ```
+then run:
+```bash
+./sea-snake    # for normal ascii mode,
+./sea-snake -u # for unicode mode, or
+./sea-snake -h # for additional instructions
+```
