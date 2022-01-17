@@ -1,5 +1,16 @@
 #include "game_tick.h"
 
+// holds the program in blocks of 200ms until a key is pressed
+void await_key(void) {
+    // while no keystroke new keycode every 200ms, return on keystroke
+    int keycode{};
+    while (true) {
+        keycode = key_from_queue();
+        if (keycode >= 0) return;
+        sleep_milli(200);
+    }
+}
+
 // gets key code from the queue, returns keycode if there is one, otherwise -1
 int key_from_queue(void) {
     int keycode {getch()};
@@ -45,14 +56,14 @@ Game_State game_state_init(void) {
         random_int(0,current_state.game_height-1)
     };
 
-    // set the starting game speed to one frame per 700ms ()
-    current_state.speed = 450;
+    // set the starting game speed to one frame per 350ms
+    current_state.speed = g_arg_speed;
 
     return current_state;
 
 }
 
-Game_State do_game_tick(Game_State current_state) {
+void do_game_tick(Game_State& current_state) {
 
     // gets direction that snake is facing from keystrokes
     // loops though keystrokes from the queue until there are no keycodes in
@@ -108,6 +119,9 @@ Game_State do_game_tick(Game_State current_state) {
             random_int(0,current_state.game_width-1),
             random_int(0,current_state.game_height-1)
         };
+        if (current_state.speed > g_arg_max_speed) {
+            current_state.speed -= g_arg_increment;
+        }
     }
 
     // compares actual size of snake to to correct snake length and pops body
@@ -127,8 +141,10 @@ Game_State do_game_tick(Game_State current_state) {
     // the snake is dead
     for (const auto& snake_segment : (current_state.snake_body)) {
         if (same_point2d_int(new_head,snake_segment)) {
-            // TODO: go to death screen instead
-            nc_exit(0); // exit program with exit code 0
+            if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
+            else {
+                draw_death(current_state);
+            }
         }
     }
     // if the new head is outside the bounds, the snake is dead
@@ -138,12 +154,13 @@ Game_State do_game_tick(Game_State current_state) {
         new_head.y > current_state.game_height-1 ||
         new_head.y < 0
     ) {
-        // TODO: go to death screen instead
-        nc_exit(0); // exit program with exit code 0
+        if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
+        else {
+            draw_death(current_state);
+        }
     }
 
     // attach the new head to the front of the snake
     current_state.snake_body.emplace_front(new_head);
 
-    return current_state;
 }
