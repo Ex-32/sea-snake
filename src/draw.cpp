@@ -80,3 +80,21 @@ void draw_death(const Game_State& current_state) {
     nc_exit(0);
 
 }
+void draw_win(const Game_State& current_state) {
+
+    std::string title{"You Win!"};
+    std::ostringstream str_stream;
+    str_stream << "Your score was: " << current_state.snake_length;
+    std::string subtitle{str_stream.str()};
+    std::string subtitle2{"(Press any key to close)"};
+
+    clear();
+    print_centered_string(current_state,title,-1);
+    print_centered_string(current_state,subtitle,1);
+    print_centered_string(current_state,subtitle2,2);
+    refresh();
+    await_key();
+
+    nc_exit(0);
+
+}

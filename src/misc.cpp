@@ -11,6 +11,12 @@ void death(int score) {
     std::exit(0);
 }
 
+void win(int score) {
+    endwin(); // deallocates memory and ends ncurses
+    std::cout << "You win! (score was: " << score << ")" << std::endl; // prints exit message
+    std::exit(0);
+}
+
 void sleep_milli(int milliseconds) {
     std::this_thread::sleep_for(std::chrono::milliseconds((milliseconds)));
 }

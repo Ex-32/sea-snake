@@ -20,6 +20,7 @@ struct Point2d_int {
 struct Game_State {
     int game_width;
     int game_height;
+    int game_size;
     int facing;
     std::list<Point2d_int> snake_body;
     unsigned int snake_length;

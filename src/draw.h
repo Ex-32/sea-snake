@@ -22,5 +22,6 @@ void draw_frame(const Game_State& current_state);
 
 void draw_start(const Game_State& current_state);
 void draw_death(const Game_State& current_state);
+void draw_win(const Game_State& current_state);
 
 #endif

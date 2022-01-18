@@ -38,6 +38,8 @@ Game_State game_state_init(void) {
         }
     }
 
+    current_state.game_size = current_state.game_height * current_state.game_width;
+
     current_state.facing = random_int(0,3);
 
     // initialize the snake body so that it's at least 5 "tiles" away from the edge
@@ -119,6 +121,10 @@ void do_game_tick(Game_State& current_state) {
             random_int(0,current_state.game_width-1),
             random_int(0,current_state.game_height-1)
         };
+        if (current_state.snake_length >= current_state.game_size) {
+            if (g_arg_skip_menu) win(current_state.snake_length);
+            else draw_win(current_state);
+        }
         if (current_state.speed > g_arg_max_speed) {
             current_state.speed -= g_arg_increment;
         }

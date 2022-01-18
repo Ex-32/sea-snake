@@ -16,6 +16,7 @@
 
 void nc_exit(int exitcode);
 void death(int score);
+void win(int score);
 
 void sleep_milli(int milliseconds);
 
