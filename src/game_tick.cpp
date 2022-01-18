@@ -117,18 +117,16 @@ void do_game_tick(Game_State& current_state) {
             break;
     }
 
-    // check if the head of the snake is on the fruit,
-    // if it is, increase the snake length by one and spawn a new fruit
+    // check if the head of the snake is on the fruit, if it is,
+    // increase the snake length by one and sets the flag to spawn a new fruit
+    bool new_fruit_needed{false};
     if ( same_point2d_int(new_head,current_state.fruit) ) {
         ++current_state.snake_length;
-        current_state.fruit = {
-            random_int(0,current_state.game_width-1),
-            random_int(0,current_state.game_height-1)
-        };
         if (current_state.snake_length >= current_state.game_size) {
             if (g_arg_skip_menu) win(current_state.snake_length);
             else draw_win(current_state);
         }
+        new_fruit_needed = true;
         if (current_state.speed > g_arg_max_speed) {
             current_state.speed -= g_arg_increment;
         }
@@ -172,4 +170,22 @@ void do_game_tick(Game_State& current_state) {
     // attach the new head to the front of the snake
     current_state.snake_body.emplace_front(new_head);
 
+    while (new_fruit_needed) {
+        // define a new fruit
+        current_state.fruit = {
+            // start from 1 instead of 0 because of window border
+            random_int(1,current_state.game_width),
+            random_int(1,current_state.game_height)
+        };
+        // new fruit no longer needed
+        new_fruit_needed = false;
+        // check if that spot is part of the snake
+        for (const auto& snake_segment : (current_state.snake_body)) {
+            // if it is, we need a new, new fruit
+            if (same_point2d_int(current_state.fruit, snake_segment)) {
+                new_fruit_needed = true;
+                break;
+            }
+        }
+    }
 }
