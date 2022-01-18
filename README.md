@@ -26,6 +26,6 @@ make
 then run:
 ```bash
 ./sea-snake    # for normal ascii mode,
-./sea-snake -u # for unicode mode, or
+./sea-snake -u # for unicode mode (recommended), or
 ./sea-snake -h # for additional instructions
 ```
