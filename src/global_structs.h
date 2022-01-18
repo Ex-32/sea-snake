@@ -26,7 +26,7 @@ struct Game_State {
     WINDOW* game_window;
     int game_width;
     int game_height;
-    int game_size;
+    unsigned int game_size;
     int facing;
     std::list<Point2d_int> snake_body;
     unsigned int snake_length;
