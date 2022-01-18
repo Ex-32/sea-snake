@@ -23,7 +23,11 @@ cd build
 cmake ..
 make
 ```
-then run:
+if your `ncurses` doesn't support unicode, you can compile without unicode using by adding the `NO_UNICODE` option to your cmake, like so:
+```bash
+cmake .. -D NO_UNICODE=ON
+```
+once it has compiled you can run it with:
 ```bash
 ./sea-snake    # for normal ascii mode,
 ./sea-snake -u # for unicode mode, or

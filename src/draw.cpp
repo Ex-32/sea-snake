@@ -6,9 +6,11 @@
 
 // prints string (designed to be 2 chars long) at x*2, y
 // 'w" version prints long unicode chars
+#ifndef NO_UNICODE
 void w_print_point(WINDOW* screen, const Point2d_int& point, const wchar_t* wstr) {
     mvwaddwstr(screen,point.y,(point.x*2),wstr);
 }
+#endif
 void print_point(WINDOW* screen, const Point2d_int& point, const char* str) {
     mvwprintw(screen,point.y,(point.x*2),str);
 }
@@ -25,9 +27,11 @@ void print_centered_string(const Game_State& current_state, std::string msg, int
     mvprintw((middle_y+y_offset),(middle_x-x_offset),msg.c_str());
 }
 
+#ifndef NO_UNICODE
 void w_draw_window_box(WINDOW* screen) {
     wborder(screen,0,0,0,0,0,0,0,0);
 }
+#endif
 
 void draw_window_box(WINDOW* screen) {
     wborder(
@@ -40,6 +44,7 @@ void draw_window_box(WINDOW* screen) {
 
 // draw the snake and fruit from a Game_State struct
 // 'w' version prints long unicode chars
+#ifndef NO_UNICODE
 void w_draw_frame(const Game_State& current_state) {
     werase(current_state.game_window);
 
@@ -54,6 +59,7 @@ void w_draw_frame(const Game_State& current_state) {
     w_draw_window_box(current_state.game_window);
     wrefresh(current_state.game_window);
 }
+#endif
 void draw_frame(const Game_State& current_state) {
     werase(current_state.game_window);
 

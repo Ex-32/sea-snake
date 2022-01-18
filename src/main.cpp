@@ -2,7 +2,9 @@
 #define VERSION "1.1.0"
 #include "main.h"
 
+#ifndef NO_UNICODE
 bool g_arg_wide_mode{};
+#endif
 bool g_arg_skip_menu{};
 int g_arg_speed{};
 int g_arg_increment{};
@@ -23,6 +25,7 @@ int main(int argc, char *argv[]) {
             VERSION //version
         );
 
+        #ifndef NO_UNICODE
         TCLAP::SwitchArg wide_mode(
             "u", //short flag
             "unicode", //long flag
@@ -30,6 +33,7 @@ int main(int argc, char *argv[]) {
             false //default
         );
         cmd.add(wide_mode);
+        #endif
 
         TCLAP::SwitchArg menu(
             "n", //short flag
@@ -72,7 +76,9 @@ int main(int argc, char *argv[]) {
         cmd.parse( argc, argv );
 
         //store parsed command line args in global variables
+        #ifndef NO_UNICODE
         g_arg_wide_mode = wide_mode.getValue();
+        #endif
         g_arg_skip_menu = menu.getValue();
         g_arg_speed = speed.getValue();
         g_arg_increment = increment.getValue();
@@ -87,7 +93,9 @@ int main(int argc, char *argv[]) {
     typedef std::chrono::duration<int,std::milli> millisec_type;
 
     // init screen and set up screen
+    #ifndef NO_UNICODE
     if (g_arg_wide_mode) setlocale(LC_ALL, ""); // if in unicode mode, enable unicode support
+    #endif
     initscr();             // initialize screen
     curs_set(0);           // hide cursor
     keypad(stdscr, TRUE);  // enable keypad (arrow key) support
@@ -106,6 +114,7 @@ int main(int argc, char *argv[]) {
     }
 
     // select wide mode loop or ascii loop
+    #ifndef NO_UNICODE
     if (g_arg_wide_mode) {
         while (true) {
             // get current time plus frame durration
@@ -120,6 +129,7 @@ int main(int argc, char *argv[]) {
             std::this_thread::sleep_until(end_time);
         }
     } else {
+    #endif
         while (true) {
             // get current time plus frame durration
             auto end_time{std::chrono::steady_clock::now() +
@@ -131,7 +141,9 @@ int main(int argc, char *argv[]) {
             // Zzz... (sleep for remainder of duration)
             std::this_thread::sleep_until(end_time);
         }
+    #ifndef NO_UNICODE
     }
+    #endif
 
     nc_exit(0);
     return EXIT_FAILURE;

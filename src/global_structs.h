@@ -7,7 +7,9 @@
 #include <ncurses.h>
 
 // these are declred at the top of main.cpp
+#ifndef NO_UNICODE
 extern bool g_arg_wide_mode;
+#endif
 extern bool g_arg_skip_menu;
 extern int g_arg_speed;
 extern int g_arg_increment;
