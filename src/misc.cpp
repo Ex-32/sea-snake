@@ -32,3 +32,9 @@ bool same_point2d_int(const Point2d_int& a, const Point2d_int& b) {
     if ((a.x == b.x) && (a.y == b.y)) return true;
     else return false;
 }
+
+void no_cheat(int) {
+    endwin(); // deallocates memory and ends ncurses
+    std::cout << "Resizing the terminal is cheating!" << std::endl;
+    std::exit(1);
+}

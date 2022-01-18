@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 
     // catch ^C and cleanly exit
     std::signal(SIGINT, nc_exit);
+    std::signal(SIGWINCH, no_cheat);
 
     //parse command line arguments
     try {
@@ -106,6 +107,12 @@ int main(int argc, char *argv[]) {
     // store size of console in global variables
     getmaxyx(stdscr,g_console_hight,g_console_width);
 
+    if ( g_console_hight < 14 || g_console_width < 28) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cout << "A terminal Size of at least 28x14 is required :(" << std::endl;
+        std::exit(0);
+    }
+
     // initialize the game state
     Game_State current_state = game_state_init();
 
@@ -145,6 +152,5 @@ int main(int argc, char *argv[]) {
     }
     #endif
 
-    nc_exit(0);
     return EXIT_FAILURE;
 }
