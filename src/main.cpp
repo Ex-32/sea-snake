@@ -7,6 +7,8 @@ bool g_arg_skip_menu{};
 int g_arg_speed{};
 int g_arg_increment{};
 int g_arg_max_speed{};
+int g_console_width{};
+int g_console_hight{};
 
 int main(int argc, char *argv[]) {
 
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
             "speed", //long flag
             "How fast to start the game, in milliseconds per frame", //description
             false, //required?
-            250, //default
+            200, //default
             "milliseconds" //human readable description of type
         );
         cmd.add(speed);
@@ -92,6 +94,9 @@ int main(int argc, char *argv[]) {
     cbreak();              // disable line buffering
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
+
+    // store size of console in global variables
+    getmaxyx(stdscr,g_console_hight,g_console_width);
 
     // initialize the game state
     Game_State current_state = game_state_init();

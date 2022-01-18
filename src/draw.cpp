@@ -1,52 +1,72 @@
 #include "draw.h"
 
+#define VERTICAL_SIDE '|'
+#define HORIZONTAL_SIDE '-'
+#define CORNER '@'
+
 // prints string (designed to be 2 chars long) at x*2, y
 // 'w" version prints long unicode chars
-void w_print_point(const Point2d_int& point, const wchar_t* wstr) {
-    mvaddwstr(point.y,(point.x*2),wstr);
+void w_print_point(WINDOW* screen, const Point2d_int& point, const wchar_t* wstr) {
+    mvwaddwstr(screen,point.y,(point.x*2),wstr);
 }
-void print_point(const Point2d_int& point, const char* str) {
-    mvprintw(point.y,(point.x*2),str);
+void print_point(WINDOW* screen, const Point2d_int& point, const char* str) {
+    mvwprintw(screen,point.y,(point.x*2),str);
 }
+
 void print_centered_string(const Game_State& current_state, std::string msg, int y_offset) {
     // calculate offset from string length
     int msg_length{static_cast<int>(msg.length())};
     int x_offset{msg_length/2};
     // since game_width assumes blocks of 2 charaters
-    // the value doesn't have to be halved
+    // the x value doesn't have to be halved
     int middle_x{current_state.game_width};
     int middle_y{current_state.game_height / 2};
 
     mvprintw((middle_y+y_offset),(middle_x-x_offset),msg.c_str());
 }
 
+void w_draw_window_box(WINDOW* screen) {
+    wborder(screen,0,0,0,0,0,0,0,0);
+}
+
+void draw_window_box(WINDOW* screen) {
+    wborder(
+        screen,
+        VERTICAL_SIDE,VERTICAL_SIDE,
+        HORIZONTAL_SIDE,HORIZONTAL_SIDE,
+        CORNER,CORNER,CORNER,CORNER
+    );
+}
+
 // draw the snake and fruit from a Game_State struct
-// 'w" version prints long unicode chars
+// 'w' version prints long unicode chars
 void w_draw_frame(const Game_State& current_state) {
-    erase();
+    werase(current_state.game_window);
 
     // prints a "██" in every "tile" of the snake_body list
     for (const auto& snake_segment : (current_state.snake_body)) {
-        w_print_point(snake_segment,L"██");
+        w_print_point(current_state.game_window,snake_segment,L"██");
     }
 
     // prints a "▒▒" in the "tile" of the fruit
-    w_print_point((current_state.fruit),L"░░");
+    w_print_point(current_state.game_window,current_state.fruit,L"░░");
 
-    refresh();
+    w_draw_window_box(current_state.game_window);
+    wrefresh(current_state.game_window);
 }
 void draw_frame(const Game_State& current_state) {
-    erase();
+    werase(current_state.game_window);
 
-    // prints a "##" in every "tile" of the snake_body list
+    // prints a "@@" in every "tile" of the snake_body list
     for (const auto& snake_segment : (current_state.snake_body)) {
-        print_point(snake_segment,"##");
+        print_point(current_state.game_window,snake_segment,"@@");
     }
 
-    // prints a "@@" in the "tile" of the fruit
-    print_point((current_state.fruit),"@@");
+    // prints a "##" in the "tile" of the fruit
+    print_point(current_state.game_window,current_state.fruit,"##");
 
-    refresh();
+    draw_window_box(current_state.game_window);
+    wrefresh(current_state.game_window);
 }
 
 // draws a basic text screen showing a start and death screen

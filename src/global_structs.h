@@ -4,6 +4,7 @@
 #define GLOBAL_STRUCTS_H
 
 #include <list>
+#include <ncurses.h>
 
 // these are declred at the top of main.cpp
 extern bool g_arg_wide_mode;
@@ -11,6 +12,8 @@ extern bool g_arg_skip_menu;
 extern int g_arg_speed;
 extern int g_arg_increment;
 extern int g_arg_max_speed;
+extern int g_console_width;
+extern int g_console_hight;
 
 struct Point2d_int {
     int x{0};
@@ -18,6 +21,7 @@ struct Point2d_int {
 };
 
 struct Game_State {
+    WINDOW* game_window;
     int game_width;
     int game_height;
     int game_size;
