@@ -29,3 +29,6 @@ then run:
 ./sea-snake -u # for unicode mode, or
 ./sea-snake -h # for additional instructions
 ```
+
+## credits:
+This project uses [TCLAP](http://tclap.sourceforge.net/) (licensed under MIT) for command line parsing, I have no association with TCLAP or it's maintainers.
