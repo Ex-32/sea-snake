@@ -29,6 +29,7 @@ Game_State game_state_init(void) {
 
     Game_State current_state;
 
+    // if the terminal is an odd width, we cut off the last line
     if (g_console_width % 2 == 0) {
        current_state.game_window = newwin(g_console_hight, g_console_width, 0, 0);
     } else {
@@ -42,9 +43,13 @@ Game_State game_state_init(void) {
         int y{};
         getmaxyx(current_state.game_window,y,x);
         current_state.game_height = y-2;
+        // divided by 2 because game blocks are 2 chars wide by 1 char tall
         current_state.game_width = (x/2)-2;
     }
 
+    // storing the output of signed multiplication in unsigned int is safe
+    // because if size of the terminal has already been confirmed, so it
+    // shouldn't be possible for either the game height or width to be < 0
     current_state.game_size = current_state.game_height * current_state.game_width;
 
     current_state.facing = random_int(0,3);

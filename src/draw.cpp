@@ -75,21 +75,24 @@ void draw_frame(const Game_State& current_state) {
     wrefresh(current_state.game_window);
 }
 
-// draws a basic text screen showing a start and death screen
+// basic text screens showing a start, death, and win messages
 void draw_start(const Game_State& current_state) {
 
+    // display start messages
     std::string title{"Wellcome to Sea-Snake!"};
     std::string subtitle{"(Press any key to start)"};
-
     clear();
     print_centered_string(current_state,title,-1);
     print_centered_string(current_state,subtitle,1);
     refresh();
+
+    // wait for keystroke
     await_key();
 
 }
 void draw_death(const Game_State& current_state) {
 
+    // display death message
     std::string title{"You died :("};
     std::ostringstream str_stream;
     str_stream << "Your score was: " << current_state.snake_length;
@@ -109,6 +112,7 @@ void draw_death(const Game_State& current_state) {
 }
 void draw_win(const Game_State& current_state) {
 
+    // display wining message
     std::string title{"You Win!"};
     std::ostringstream str_stream;
     str_stream << "Your score was: " << current_state.snake_length;
