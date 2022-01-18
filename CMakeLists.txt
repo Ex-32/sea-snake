@@ -6,9 +6,17 @@ cmake_minimum_required(VERSION 3.8)
 # try enabling this flag.
 option(NO_UNICODE "compiles without unicode support" OFF)
 
+# enable debug flags (overrules OPTIMIZATIONS)
+option(DEBUG "compiles in debug mode" OFF)
+# enables optimization flags (overruled by DEBUG)
+option(OPTIMIZATIONS "enables compiler optimization" ON)
+# if you turn this off you're on your own
+option(WARNINGS "enables exteneded compiler warnings; turn off at your own peril" ON)
+
+# define project
 project("sea-snake")
 
-# C++17 is required
+# C++17 is required, this enforces that
 set(CMAKE_CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED)
 
@@ -27,7 +35,8 @@ endif(NO_UNICODE)
 # add sea-snake executable
 add_executable(sea-snake "./src/main.cpp" "./src/draw.cpp" "./src/game_tick.cpp" "./src/misc.cpp")
 
-# add local include folder to nprimes target
+# add local include folder to target
+# this contains the tclap
 target_include_directories(sea-snake PRIVATE "./include")
 
 # must be defined for unicode ncurses to work on certain platforms
@@ -49,13 +58,25 @@ endif(NO_UNICODE)
 target_link_libraries(sea-snake PRIVATE "${NCURSES_LIB}")
 
 # add warning flags
-target_compile_options(sea-snake PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>: /W4 >
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Wall -Wextra -Wpedantic >
-)
+if(WARNINGS)
+  target_compile_options(sea-snake PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>: /W4 >
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Wall -Wextra -Wpedantic >
+  )
+endif(WARNINGS)
+
+# add debug flags
+if(DEBUG)
+  target_compile_options(sea-snake PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>: /Od >
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Og >
+  )
+endif(DEBUG)
 
 # add optimization flags
-target_compile_options(sea-snake PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>: /O2 >
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -O2 >
-)
+if(OPTIMIZATIONS AND NOT DEBUG)
+  target_compile_options(sea-snake PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>: /O2 >
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -O2 >
+  )
+endif(OPTIMIZATIONS AND NOT DEBUG)
