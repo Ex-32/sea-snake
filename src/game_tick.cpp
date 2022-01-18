@@ -2,8 +2,12 @@
 
 // holds the program in blocks of 200ms until a key is pressed
 void await_key(void) {
-    // while no keystroke new keycode every 200ms, return on keystroke
+    // clear char queue
     int keycode{};
+    while (keycode >= 0) {
+        keycode = key_from_queue();
+    }
+    // while no keystroke new keycode every 200ms, return on keystroke
     while (true) {
         keycode = key_from_queue();
         if (keycode >= 0) return;

@@ -95,14 +95,15 @@ void draw_death(const Game_State& current_state) {
     str_stream << "Your score was: " << current_state.snake_length;
     std::string subtitle{str_stream.str()};
     std::string subtitle2{"(Press any key to close)"};
-
     clear();
     print_centered_string(current_state,title,-1);
     print_centered_string(current_state,subtitle,1);
     print_centered_string(current_state,subtitle2,2);
     refresh();
-    await_key();
 
+    // wait for user to realize they died, then wait for keystroke, then exit
+    sleep_milli(300);
+    await_key();
     nc_exit(0);
 
 }
@@ -113,14 +114,15 @@ void draw_win(const Game_State& current_state) {
     str_stream << "Your score was: " << current_state.snake_length;
     std::string subtitle{str_stream.str()};
     std::string subtitle2{"(Press any key to close)"};
-
     clear();
     print_centered_string(current_state,title,-1);
     print_centered_string(current_state,subtitle,1);
     print_centered_string(current_state,subtitle2,2);
     refresh();
-    await_key();
 
+    // wait for user to realize they won, then wait for keystroke, then exit
+    sleep_milli(300);
+    await_key();
     nc_exit(0);
 
 }
