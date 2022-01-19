@@ -5,12 +5,18 @@
 #ifndef NO_UNICODE
 bool g_arg_wide_mode{};
 #endif
+bool g_arg_color_mode{};
 bool g_arg_skip_menu{};
 int g_arg_speed{};
 int g_arg_increment{};
 int g_arg_max_speed{};
 int g_console_width{};
 int g_console_hight{};
+
+draw_point_ptr g_draw_head,
+               g_draw_body,
+               g_draw_fruit;
+draw_box_ptr   g_draw_box;
 
 int main(int argc, char *argv[]) {
 
@@ -35,6 +41,14 @@ int main(int argc, char *argv[]) {
         );
         cmd.add(wide_mode);
         #endif
+
+        TCLAP::SwitchArg color_mode(
+            "u", //short flag
+            "unicode", //long flag
+            "Draw snake using unicode characters", //description
+            false //default
+        );
+        cmd.add(color_mode);
 
         TCLAP::SwitchArg menu(
             "n", //short flag
@@ -89,29 +103,35 @@ int main(int argc, char *argv[]) {
         std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
     }
 
-    // politely explaining to the program that milliseconds do, in fact,
-    // exist and a duration of them should be called "millisec_type"
-    typedef std::chrono::duration<int,std::milli> millisec_type;
-
-    // init screen and set up screen
+    // init screen and do set up
     #ifndef NO_UNICODE
-    if (g_arg_wide_mode) setlocale(LC_ALL, ""); // if in unicode mode, enable unicode support
+    // if in unicode mode, enable unicode support, must happen before initscr()
+    if (g_arg_wide_mode) setlocale(LC_ALL, "");
     #endif
+
     initscr();             // initialize screen
+
+    // store size of console in global variables
+    getmaxyx(stdscr,g_console_hight,g_console_width);
+
+    // this has to be done after initscr(), which has to be done after setlocale()
+    if ( g_console_hight < 14 || g_console_width < 28) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cout << "A terminal Size of at least 28x14 is required :(" << std::endl;
+        std::exit(0);
+    }
+
     curs_set(0);           // hide cursor
     keypad(stdscr, TRUE);  // enable keypad (arrow key) support
     cbreak();              // disable line buffering
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
 
-    // store size of console in global variables
-    getmaxyx(stdscr,g_console_hight,g_console_width);
+    #ifndef NO_UNICODE
+    if (g_arg_wide_mode) {
 
-    if ( g_console_hight < 14 || g_console_width < 28) {
-        endwin(); // deallocates memory and ends ncurses
-        std::cout << "A terminal Size of at least 28x14 is required :(" << std::endl;
-        std::exit(0);
     }
+    #endif
 
     // initialize the game state
     Game_State current_state = game_state_init();
@@ -120,37 +140,18 @@ int main(int argc, char *argv[]) {
         draw_start(current_state);
     }
 
-    // select wide mode loop or ascii loop
-    #ifndef NO_UNICODE
-    if (g_arg_wide_mode) {
-        while (true) {
-            // get current time plus frame durration
-            auto end_time{std::chrono::steady_clock::now() +
-                        millisec_type(current_state.speed)};
-            // get user input and update state
-            do_game_tick(current_state);
-            // draw the game state in the window
-            // (wide mode uses unicode chars)
-            w_draw_frame(current_state);
-            // Zzz... (sleep for remainder of duration)
-            std::this_thread::sleep_until(end_time);
-        }
-    } else {
-    #endif
-        while (true) {
-            // get current time plus frame durration
-            auto end_time{std::chrono::steady_clock::now() +
-                        millisec_type(current_state.speed)};
-            // get user input and update state
-            do_game_tick(current_state);
-            // draw the game state in the window
-            draw_frame(current_state);
-            // Zzz... (sleep for remainder of duration)
-            std::this_thread::sleep_until(end_time);
-        }
-    #ifndef NO_UNICODE
+    while (true) {
+        // get current time plus frame durration
+        auto end_time{std::chrono::steady_clock::now() +
+                    millisec_type(current_state.speed)};
+        // get user input and update state
+        do_game_tick(current_state);
+        // draw the game state in the window
+        draw_frame(current_state);
+        // Zzz... (sleep for remainder of duration)
+        std::this_thread::sleep_until(end_time);
     }
-    #endif
+
 
     return EXIT_FAILURE;
 }
