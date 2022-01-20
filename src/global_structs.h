@@ -1,3 +1,5 @@
+//#define NO_UNICODE
+
 #pragma once
 
 #ifndef GLOBAL_STRUCTS_H
@@ -43,5 +45,12 @@ struct Game_State {
 
 typedef void (*draw_point_ptr)(WINDOW*,const Point2d_int&);
 typedef void (*draw_box_ptr)(WINDOW*);
+
+extern draw_box_ptr g_draw_box;
+
+extern draw_point_ptr g_draw_head;
+extern draw_point_ptr g_draw_body;
+extern draw_point_ptr g_draw_fruit;
+extern draw_point_ptr g_draw_back;
 
 #endif

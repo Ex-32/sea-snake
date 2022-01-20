@@ -13,6 +13,8 @@
 
 extern WINDOW *stdscr;
 
+void print_centered_string(const Game_State& current_state, std::string msg, int y_offset);
+
 #ifndef NO_UNICODE
 void _w_print_head(WINDOW* screen, const Point2d_int& point);
 void _w_print_body(WINDOW* screen, const Point2d_int& point);
@@ -22,18 +24,19 @@ void _print_head(WINDOW* screen, const Point2d_int& point);
 void _print_body(WINDOW* screen, const Point2d_int& point);
 void _print_fruit(WINDOW* screen, const Point2d_int& point);
 
-#ifndef NO_UNICODE
-void w_draw_window_box(WINDOW* screen);
-#endif
-void draw_window_box(WINDOW* screen);
+void _print_back(WINDOW* screen, const Point2d_int& point);
 
-draw_point_ptr draw_head_init(void);
-draw_point_ptr draw_body_init(void);
-draw_point_ptr draw_fruit_init(void);
+void _color_head(WINDOW* screen, const Point2d_int& point);
+void _color_body(WINDOW* screen, const Point2d_int& point);
+void _color_fruit(WINDOW* screen, const Point2d_int& point);
 
 #ifndef NO_UNICODE
-void w_draw_frame(const Game_State& current_state);
+void _w_print_box(WINDOW* screen);
 #endif
+void _print_box(WINDOW* screen);
+
+bool draw_init(void);
+
 void draw_frame(const Game_State& current_state);
 
 void draw_start(const Game_State& current_state);

@@ -13,10 +13,12 @@ int g_arg_max_speed{};
 int g_console_width{};
 int g_console_hight{};
 
-draw_point_ptr g_draw_head,
-               g_draw_body,
-               g_draw_fruit;
-draw_box_ptr   g_draw_box;
+draw_box_ptr g_draw_box;
+
+draw_point_ptr g_draw_head;
+draw_point_ptr g_draw_body;
+draw_point_ptr g_draw_fruit;
+draw_point_ptr g_draw_back;
 
 int main(int argc, char *argv[]) {
 
@@ -43,9 +45,9 @@ int main(int argc, char *argv[]) {
         #endif
 
         TCLAP::SwitchArg color_mode(
-            "u", //short flag
-            "unicode", //long flag
-            "Draw snake using unicode characters", //description
+            "c", //short flag
+            "color", //long flag
+            "Colorize Output", //description
             false //default
         );
         cmd.add(color_mode);
@@ -94,6 +96,7 @@ int main(int argc, char *argv[]) {
         #ifndef NO_UNICODE
         g_arg_wide_mode = wide_mode.getValue();
         #endif
+        g_arg_color_mode = color_mode.getValue();
         g_arg_skip_menu = menu.getValue();
         g_arg_speed = speed.getValue();
         g_arg_increment = increment.getValue();
@@ -115,9 +118,15 @@ int main(int argc, char *argv[]) {
     getmaxyx(stdscr,g_console_hight,g_console_width);
 
     // this has to be done after initscr(), which has to be done after setlocale()
+    // pre init sanity checks
     if ( g_console_hight < 14 || g_console_width < 28) {
         endwin(); // deallocates memory and ends ncurses
         std::cout << "A terminal Size of at least 28x14 is required :(" << std::endl;
+        std::exit(0);
+    }
+    if ( (has_colors() == false) && g_arg_color_mode ) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cout << "Your terminal deosn't support colors :(" << std::endl;
         std::exit(0);
     }
 
@@ -126,12 +135,7 @@ int main(int argc, char *argv[]) {
     cbreak();              // disable line buffering
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
-
-    #ifndef NO_UNICODE
-    if (g_arg_wide_mode) {
-
-    }
-    #endif
+    draw_init();
 
     // initialize the game state
     Game_State current_state = game_state_init();
