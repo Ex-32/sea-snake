@@ -4,8 +4,7 @@
 #define HEAD_PAIR   1
 #define BODY_PAIR   2
 #define FRUIT_PAIR  3
-#define BACK_PAIR   4
-#define BOX_PAIR    5
+#define BOX_PAIR    4
 
 
 void print_centered_string(const Game_State& current_state, std::string msg, int y_offset) {
@@ -23,28 +22,65 @@ void print_centered_string(const Game_State& current_state, std::string msg, int
 // different kinds of blocks onto screen
 // 'w' version prints long unicode chars
 #ifndef NO_UNICODE
-void _w_print_head(WINDOW* screen, const Point2d_int& point) {
-    mvwaddwstr(screen,point.y,(point.x*2),L"██");
-}
-void _w_print_body(WINDOW* screen, const Point2d_int& point) {
-    mvwaddwstr(screen,point.y,(point.x*2),L"██");
-}
-void _w_print_fruit(WINDOW* screen, const Point2d_int& point) {
-    mvwaddwstr(screen,point.y,(point.x*2),L"░░");
-}
-#endif
-void _print_head(WINDOW* screen, const Point2d_int& point) {
-    mvwprintw(screen,point.y,(point.x*2),"@@");
-}
-void _print_body(WINDOW* screen, const Point2d_int& point) {
-    mvwprintw(screen,point.y,(point.x*2),"@@");
-}
-void _print_fruit(WINDOW* screen, const Point2d_int& point) {
-    mvwprintw(screen,point.y,(point.x*2),"##");
+
+void _w_print_head(const Game_State& current_state) {
+    mvwaddwstr(
+        current_state.game_window,
+        current_state.snake_head.y,
+        (current_state.snake_head.x*2),
+        L"██"
+    );
 }
 
-void _print_back(WINDOW* screen, const Point2d_int& point) {
-    mvwprintw(screen,point.y,(point.x*2)," .");
+void _w_print_body(const Game_State& current_state) {
+    for (const auto& snake_segment : (current_state.snake_body)) {
+        mvwaddwstr(
+            current_state.game_window,
+            snake_segment.y,
+            (snake_segment.x*2),
+            L"▓▓"
+        );
+    }
+}
+
+void _w_print_fruit(const Game_State& current_state) {
+    mvwaddwstr(
+        current_state.game_window,
+        current_state.fruit.y,
+        (current_state.fruit.x*2),
+        L"░░"
+    );
+}
+
+#endif
+
+void _print_head(const Game_State& current_state) {
+    mvwprintw(
+        current_state.game_window,
+        current_state.snake_head.y,
+        (current_state.snake_head.x*2),
+        "@@"
+    );
+}
+
+void _print_body(const Game_State& current_state) {
+    for (const auto& snake_segment : (current_state.snake_body)) {
+        mvwprintw(
+            current_state.game_window,
+            snake_segment.y,
+            (snake_segment.x*2),
+            "%%%%"
+        );
+    }
+}
+
+void _print_fruit(const Game_State& current_state) {
+    mvwprintw(
+        current_state.game_window,
+        current_state.fruit.y,
+        (current_state.fruit.x*2),
+        "##"
+    );
 }
 
 #define VERTICAL_SIDE '|'
@@ -67,31 +103,24 @@ void _print_box(WINDOW* screen) {
 
 
 draw_point_ptr g_color_head_internal;
-void _color_head(WINDOW* screen, const Point2d_int& point) {
+void _color_head(const Game_State& current_state) {
     wattron(screen,COLOR_PAIR(HEAD_PAIR));
-    g_color_head_internal(screen,point);
+    g_color_head_internal(current_state);
     wattroff(screen,COLOR_PAIR(HEAD_PAIR));
 }
 
 draw_point_ptr g_color_body_internal;
-void _color_body(WINDOW* screen, const Point2d_int& point) {
+void _color_body(const Game_State& current_state) {
     wattron(screen,COLOR_PAIR(BODY_PAIR));
-    g_color_body_internal(screen,point);
+    g_color_body_internal(current_state);
     wattroff(screen,COLOR_PAIR(BODY_PAIR));
 }
 
 draw_point_ptr g_color_fruit_internal;
-void _color_fruit(WINDOW* screen, const Point2d_int& point) {
+void _color_fruit(const Game_State& current_state) {
     wattron(screen,COLOR_PAIR(FRUIT_PAIR));
-    g_color_fruit_internal(screen,point);
+    g_color_fruit_internal(current_state);
     wattroff(screen,COLOR_PAIR(FRUIT_PAIR));
-}
-
-draw_point_ptr g_color_back_internal;
-void _color_back(WINDOW* screen, const Point2d_int& point) {
-    wattron(screen,COLOR_PAIR(BACK_PAIR));
-    g_color_back_internal(screen,point);
-    wattroff(screen,COLOR_PAIR(BACK_PAIR));
 }
 
 draw_box_ptr g_color_box_internal;
@@ -102,8 +131,6 @@ void _color_box(WINDOW* screen) {
 }
 
 bool draw_init(void) {
-
-    g_draw_back = _print_back;
 
     #ifndef NO_UNICODE
     if (g_arg_wide_mode) {
@@ -125,22 +152,19 @@ bool draw_init(void) {
 
         start_color();
 
-        init_pair(HEAD_PAIR, COLOR_CYAN, COLOR_CYAN);
-        init_pair(BODY_PAIR, COLOR_BLUE, COLOR_BLUE);
-        init_pair(FRUIT_PAIR, COLOR_RED, COLOR_YELLOW);
-        init_pair(BACK_PAIR, COLOR_YELLOW, COLOR_GREEN);
-        init_pair(BODY_PAIR, COLOR_RED, COLOR_GREEN);
+        init_pair(HEAD_PAIR, COLOR_BLUE, COLOR_BLUE);
+        init_pair(BODY_PAIR, COLOR_BLUE, COLOR_CYAN);
+        init_pair(FRUIT_PAIR, COLOR_RED, COLOR_RED);
+        init_pair(BOX_PAIR, COLOR_RED, COLOR_BLACK);
 
         g_color_head_internal = g_draw_head;
         g_color_body_internal = g_draw_body;
         g_color_fruit_internal = g_draw_fruit;
-        g_color_back_internal = g_draw_back;
         g_color_box_internal = g_draw_box;
 
         g_draw_head = _color_head;
         g_draw_body = _color_body;
         g_draw_fruit = _color_fruit;
-        g_draw_back = _color_back;
         g_draw_box = _color_box;
     }
 
@@ -154,6 +178,8 @@ bool draw_init(void) {
 void draw_frame(const Game_State& current_state) {
 
     werase(current_state.game_window);
+
+    g_draw_head(current_state.game_window,current_state.snake_head);
 
     for (const auto& snake_segment : (current_state.snake_body)) {
         g_draw_body(current_state.game_window,snake_segment);

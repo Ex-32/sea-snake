@@ -59,10 +59,10 @@ Game_State game_state_init(void) {
         random_int(6,(current_state.game_width-5)),
         random_int(6,(current_state.game_height-5))
     };
-    current_state.snake_body.emplace_front(snake_start);
+    current_state.snake_head = snake_start;
 
     // snake has starting length of one
-    current_state.snake_length = 1;
+    current_state.snake_length = 0;
 
     // initialize first fruit
     current_state.fruit = {
@@ -106,30 +106,31 @@ void do_game_tick(Game_State& current_state) {
     }
     current_state.facing = new_facing;
 
+    // attach the old head to the front of the snake
+    current_state.snake_body.emplace_front(current_state.snake_head);
+
     // get current location of head, create new snake segment that's moved one
     // tile in the direction that it's facing then add that to the front of the
     // snake, effectively moving the snake forward one tile
-    Point2d_int old_head = current_state.snake_body.front();
-    Point2d_int new_head{old_head};
     switch(current_state.facing) {
         case 0: // move head down one tile
-            ++new_head.y;
+            ++current_state.snake_head.y;
             break;
         case 1: // move head up one tile
-            --new_head.y;
+            --current_state.snake_head.y;
             break;
         case 2: // move head left one tile
-            --new_head.x;
+            --current_state.snake_head.x;
             break;
         case 3: // move head right one tile
-            ++new_head.x;
+            ++current_state.snake_head.x;
             break;
     }
 
     // check if the head of the snake is on the fruit, if it is,
     // increase the snake length by one and sets the flag to spawn a new fruit
     bool new_fruit_needed{false};
-    if ( same_point2d_int(new_head,current_state.fruit) ) {
+    if ( same_point2d_int(current_state.snake_head,current_state.fruit) ) {
         ++current_state.snake_length;
         if (current_state.snake_length >= current_state.game_size) {
             if (g_arg_skip_menu) win(current_state.snake_length);
@@ -147,8 +148,7 @@ void do_game_tick(Game_State& current_state) {
     // current_state.snake_length and snake_length_actual are unsigned ints)
     for (
         long unsigned int snake_length_actual{current_state.snake_body.size()};
-        snake_length_actual > current_state.snake_length-1;
-        // -1 because we haven't added the new head yet ^^
+        snake_length_actual > current_state.snake_length;
         snake_length_actual = current_state.snake_body.size()
     ) {
         current_state.snake_body.pop_back();
@@ -157,7 +157,7 @@ void do_game_tick(Game_State& current_state) {
     // if the new head should be where the snake body already is,
     // the snake is dead
     for (const auto& snake_segment : (current_state.snake_body)) {
-        if (same_point2d_int(new_head,snake_segment)) {
+        if (same_point2d_int(current_state.snake_head,snake_segment)) {
         if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
         else draw_death(current_state);
 
@@ -166,18 +166,15 @@ void do_game_tick(Game_State& current_state) {
     // if the new head is outside the bounds, the snake is dead
     if (
         // < 1 instead of < 0 because of window border
-        new_head.x > current_state.game_width ||
-        new_head.x < 1 ||
-        new_head.y > current_state.game_height ||
-        new_head.y < 1
+        current_state.snake_head.x > current_state.game_width ||
+        current_state.snake_head.x < 1 ||
+        current_state.snake_head.y > current_state.game_height ||
+        current_state.snake_head.y < 1
     ) {
         if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
         else draw_death(current_state);
 
     }
-
-    // attach the new head to the front of the snake
-    current_state.snake_body.emplace_front(new_head);
 
     while (new_fruit_needed) {
         // define a new fruit

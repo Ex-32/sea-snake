@@ -18,7 +18,6 @@ draw_box_ptr g_draw_box;
 draw_point_ptr g_draw_head;
 draw_point_ptr g_draw_body;
 draw_point_ptr g_draw_fruit;
-draw_point_ptr g_draw_back;
 
 int main(int argc, char *argv[]) {
 

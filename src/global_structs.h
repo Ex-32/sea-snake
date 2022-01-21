@@ -36,14 +36,14 @@ struct Game_State {
     int game_height;
     unsigned int game_size;
     int facing;
-    //Point2d_int snake_head;
+    Point2d_int snake_head;
     std::list<Point2d_int> snake_body;
     unsigned int snake_length;
     Point2d_int fruit;
     int speed;
 };
 
-typedef void (*draw_point_ptr)(WINDOW*,const Point2d_int&);
+typedef void (*draw_point_ptr)(WINDOW*, const Game_State& current_state);
 typedef void (*draw_box_ptr)(WINDOW*);
 
 extern draw_box_ptr g_draw_box;
