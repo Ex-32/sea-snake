@@ -1,5 +1,5 @@
 
-#define VERSION "1.1.0"
+#define VERSION "1.2.0"
 #include "main.h"
 
 #ifndef NO_UNICODE
@@ -120,13 +120,13 @@ int main(int argc, char *argv[]) {
     // pre init sanity checks
     if ( g_console_hight < 14 || g_console_width < 28) {
         endwin(); // deallocates memory and ends ncurses
-        std::cout << "A terminal Size of at least 28x14 is required :(" << std::endl;
-        std::exit(0);
+        std::cerr << "A terminal Size of at least 28x14 is required :(" << std::endl;
+        std::exit(1);
     }
     if ( (has_colors() == false) && g_arg_color_mode ) {
         endwin(); // deallocates memory and ends ncurses
-        std::cout << "Your terminal deosn't support colors :(" << std::endl;
-        std::exit(0);
+        std::cerr << "Your terminal deosn't support colors :(" << std::endl;
+        std::exit(1);
     }
 
     curs_set(0);           // hide cursor
@@ -134,7 +134,14 @@ int main(int argc, char *argv[]) {
     cbreak();              // disable line buffering
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
-    draw_init();
+
+    // draw_init() returns true on sucessfull initialization and false otherwise
+    if (draw_init() == false) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cout << "!! Funtion pointer assignemnt failed !! report this at:"
+                     "\nhttps://github.com/Ex-32/sea-snake/issues" << std::endl;
+        std::exit(-1);
+    }
 
     // initialize the game state
     Game_State current_state = game_state_init();
@@ -154,7 +161,6 @@ int main(int argc, char *argv[]) {
         // Zzz... (sleep for remainder of duration)
         std::this_thread::sleep_until(end_time);
     }
-
 
     return EXIT_FAILURE;
 }

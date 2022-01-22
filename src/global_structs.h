@@ -1,5 +1,3 @@
-//#define NO_UNICODE
-
 #pragma once
 
 #ifndef GLOBAL_STRUCTS_H
@@ -43,7 +41,7 @@ struct Game_State {
     int speed;
 };
 
-typedef void (*draw_point_ptr)(WINDOW*, const Game_State& current_state);
+typedef void (*draw_point_ptr)(const Game_State& current_state);
 typedef void (*draw_box_ptr)(WINDOW*);
 
 extern draw_box_ptr g_draw_box;
