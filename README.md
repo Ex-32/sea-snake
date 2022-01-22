@@ -43,4 +43,4 @@ adding the `-u` and/or `-c` will use unicode and/or color respectively, you can 
 This project uses [TCLAP](http://tclap.sourceforge.net/) (licensed under MIT) for command line parsing.
 
 ## disclaimer:
-I have no association with [Cygwin](https://www.cygwin.com/), Microsoft ([WSL2](https://docs.microsoft.com/en-us/windows/wsl/about)), [Homebrew](https://brew.sh/), [TCLAP](http://tclap.sourceforge.net/), or their respective maintainers
+I have no association with [Cygwin](https://www.cygwin.com/), Microsoft ([WSL2](https://docs.microsoft.com/en-us/windows/wsl/about)), [Homebrew](https://brew.sh/), [TCLAP](http://tclap.sourceforge.net/), or their respective maintainers.
