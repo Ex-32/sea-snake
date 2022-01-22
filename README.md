@@ -14,12 +14,12 @@ apk add make cmake g++ ncurses-dev            # Alpine (run as root or sudo)
 if you use a different linux distro, your package manager probably has the same packages under the same or similar names, if not, you can find, build, and install them yourself.
 
 #### MacOS:
-if you have the Xcode command line utils installed there's a decent chance you already have the necessary tools, otherwise you can install them by hand or with a 3rd party package manager such as [Homebrew](https://brew.sh/):
+if you have the Xcode command line utils installed there's a decent chance you already have the necessary tools, otherwise you can install them by hand, or with a 3rd party package manager such as [Homebrew](https://brew.sh/):
 ```bash
 brew install g++ cmake ncurses
 ```
 
-Then download or clone the code, and compile with cmake:
+#### Then download or clone the code, and compile with cmake:
 ```bash
 # from .../sea-snake
 mkdir build
