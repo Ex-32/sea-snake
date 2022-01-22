@@ -29,7 +29,7 @@ make
 ```
 if your `ncurses` doesn't support unicode, you can compile without unicode using by adding the `NO_UNICODE` option to your cmake, like so:
 ```bash
-cmake .. -D NO_UNICODE=OFF
+cmake .. -D NO_UNICODE=ON
 ```
 once it has compiled you can run it with:
 ```bash
