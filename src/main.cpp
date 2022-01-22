@@ -1,17 +1,29 @@
 
-#define VERSION "1.1.0"
+#define VERSION "1.2.0"
 #include "main.h"
 
+#ifndef NO_UNICODE
 bool g_arg_wide_mode{};
+#endif
+bool g_arg_color_mode{};
 bool g_arg_skip_menu{};
 int g_arg_speed{};
 int g_arg_increment{};
 int g_arg_max_speed{};
+int g_console_width{};
+int g_console_hight{};
+
+draw_box_ptr g_draw_box;
+
+draw_point_ptr g_draw_head;
+draw_point_ptr g_draw_body;
+draw_point_ptr g_draw_fruit;
 
 int main(int argc, char *argv[]) {
 
     // catch ^C and cleanly exit
     std::signal(SIGINT, nc_exit);
+    std::signal(SIGWINCH, no_cheat);
 
     //parse command line arguments
     try {
@@ -21,6 +33,7 @@ int main(int argc, char *argv[]) {
             VERSION //version
         );
 
+        #ifndef NO_UNICODE
         TCLAP::SwitchArg wide_mode(
             "u", //short flag
             "unicode", //long flag
@@ -28,6 +41,15 @@ int main(int argc, char *argv[]) {
             false //default
         );
         cmd.add(wide_mode);
+        #endif
+
+        TCLAP::SwitchArg color_mode(
+            "c", //short flag
+            "color", //long flag
+            "Colorize Output", //description
+            false //default
+        );
+        cmd.add(color_mode);
 
         TCLAP::SwitchArg menu(
             "n", //short flag
@@ -42,7 +64,7 @@ int main(int argc, char *argv[]) {
             "speed", //long flag
             "How fast to start the game, in milliseconds per frame", //description
             false, //required?
-            250, //default
+            200, //default
             "milliseconds" //human readable description of type
         );
         cmd.add(speed);
@@ -70,7 +92,10 @@ int main(int argc, char *argv[]) {
         cmd.parse( argc, argv );
 
         //store parsed command line args in global variables
+        #ifndef NO_UNICODE
         g_arg_wide_mode = wide_mode.getValue();
+        #endif
+        g_arg_color_mode = color_mode.getValue();
         g_arg_skip_menu = menu.getValue();
         g_arg_speed = speed.getValue();
         g_arg_increment = increment.getValue();
@@ -80,18 +105,43 @@ int main(int argc, char *argv[]) {
         std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
     }
 
-    // politely explaining to the program that milliseconds do, in fact,
-    // exist and a duration of them should be called "millisec_type"
-    typedef std::chrono::duration<int,std::milli> millisec_type;
+    // init screen and do set up
+    #ifndef NO_UNICODE
+    // if in unicode mode, enable unicode support, must happen before initscr()
+    if (g_arg_wide_mode) setlocale(LC_ALL, "");
+    #endif
 
-    // init screen and set up screen
-    if (g_arg_wide_mode) setlocale(LC_ALL, ""); // if in unicode mode, enable unicode support
     initscr();             // initialize screen
+
+    // store size of console in global variables
+    getmaxyx(stdscr,g_console_hight,g_console_width);
+
+    // this has to be done after initscr(), which has to be done after setlocale()
+    // pre init sanity checks
+    if ( g_console_hight < 14 || g_console_width < 28) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cerr << "A terminal Size of at least 28x14 is required :(" << std::endl;
+        std::exit(1);
+    }
+    if ( (has_colors() == false) && g_arg_color_mode ) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cerr << "Your terminal deosn't support colors :(" << std::endl;
+        std::exit(1);
+    }
+
     curs_set(0);           // hide cursor
     keypad(stdscr, TRUE);  // enable keypad (arrow key) support
     cbreak();              // disable line buffering
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
+
+    // draw_init() returns true on sucessfull initialization and false otherwise
+    if (draw_init() == false) {
+        endwin(); // deallocates memory and ends ncurses
+        std::cout << "!! Funtion pointer assignemnt failed !! report this at:"
+                     "\nhttps://github.com/Ex-32/sea-snake/issues" << std::endl;
+        std::exit(-1);
+    }
 
     // initialize the game state
     Game_State current_state = game_state_init();
@@ -100,34 +150,17 @@ int main(int argc, char *argv[]) {
         draw_start(current_state);
     }
 
-    // select wide mode loop or ascii loop
-    if (g_arg_wide_mode) {
-        while (true) {
-            // get current time plus frame durration
-            auto end_time{std::chrono::steady_clock::now() +
-                        millisec_type(current_state.speed)};
-            // get user input and update state
-            do_game_tick(current_state);
-            // draw the game state in the window
-            // (wide mode uses unicode chars)
-            w_draw_frame(current_state);
-            // Zzz... (sleep for remainder of duration)
-            std::this_thread::sleep_until(end_time);
-        }
-    } else {
-        while (true) {
-            // get current time plus frame durration
-            auto end_time{std::chrono::steady_clock::now() +
-                        millisec_type(current_state.speed)};
-            // get user input and update state
-            do_game_tick(current_state);
-            // draw the game state in the window
-            draw_frame(current_state);
-            // Zzz... (sleep for remainder of duration)
-            std::this_thread::sleep_until(end_time);
-        }
+    while (true) {
+        // get current time plus frame durration
+        auto end_time{std::chrono::steady_clock::now() +
+                    millisec_type(current_state.speed)};
+        // get user input and update state
+        do_game_tick(current_state);
+        // draw the game state in the window
+        draw_frame(current_state);
+        // Zzz... (sleep for remainder of duration)
+        std::this_thread::sleep_until(end_time);
     }
 
-    nc_exit(0);
     return EXIT_FAILURE;
 }

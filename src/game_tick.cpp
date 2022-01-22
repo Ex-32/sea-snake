@@ -2,8 +2,12 @@
 
 // holds the program in blocks of 200ms until a key is pressed
 void await_key(void) {
-    // while no keystroke new keycode every 200ms, return on keystroke
+    // clear char queue
     int keycode{};
+    while (keycode >= 0) {
+        keycode = key_from_queue();
+    }
+    // while no keystroke new keycode every 200ms, return on keystroke
     while (true) {
         keycode = key_from_queue();
         if (keycode >= 0) return;
@@ -25,38 +29,49 @@ Game_State game_state_init(void) {
 
     Game_State current_state;
 
-    // initialize size of game field from console size
+    // if the terminal is an odd width, we cut off the last line
+    if (g_console_width % 2 == 0) {
+       current_state.game_window = newwin(g_console_hight, g_console_width, 0, 0);
+    } else {
+        current_state.game_window = newwin(g_console_hight, (g_console_width-1), 0, 0);
+    }
+
+    // initialize size of game field from window size
+    // 2 less than window size to account for window border
     {
         int x{};
         int y{};
-        getmaxyx(stdscr,y,x);
-        current_state.game_height = y;
-        if (x % 2 == 0) {
-            current_state.game_width = (x/2);
-        } else {
-            current_state.game_width  = ((x-1)/2);
-        }
+        getmaxyx(current_state.game_window,y,x);
+        current_state.game_height = y-2;
+        // divided by 2 because game blocks are 2 chars wide by 1 char tall
+        current_state.game_width = (x/2)-2;
     }
+
+    // storing the output of signed multiplication in unsigned int is safe
+    // because if size of the terminal has already been confirmed, so it
+    // shouldn't be possible for either the game height or width to be < 0
+    current_state.game_size = current_state.game_height * current_state.game_width;
 
     current_state.facing = random_int(0,3);
 
     // initialize the snake body so that it's at least 5 "tiles" away from the edge
     Point2d_int snake_start{
-        random_int(5,(current_state.game_width-6)),
-        random_int(5,(current_state.game_height-6))
+        random_int(6,(current_state.game_width-5)),
+        random_int(6,(current_state.game_height-5))
     };
-    current_state.snake_body.emplace_front(snake_start);
+    current_state.snake_head = snake_start;
 
     // snake has starting length of one
-    current_state.snake_length = 1;
+    current_state.snake_length = 0;
 
     // initialize first fruit
     current_state.fruit = {
-        random_int(0,current_state.game_width-1),
-        random_int(0,current_state.game_height-1)
+        // start from 1 instead of 0 because of window border
+        random_int(1,current_state.game_width),
+        random_int(1,current_state.game_height)
     };
 
-    // set the starting game speed to one frame per 350ms
+    // set the starting game speed to stating speed (one frame per 200ms by default)
     current_state.speed = g_arg_speed;
 
     return current_state;
@@ -91,34 +106,37 @@ void do_game_tick(Game_State& current_state) {
     }
     current_state.facing = new_facing;
 
+    // attach the old head to the front of the snake
+    current_state.snake_body.emplace_front(current_state.snake_head);
+
     // get current location of head, create new snake segment that's moved one
     // tile in the direction that it's facing then add that to the front of the
     // snake, effectively moving the snake forward one tile
-    Point2d_int old_head = current_state.snake_body.front();
-    Point2d_int new_head{old_head};
     switch(current_state.facing) {
         case 0: // move head down one tile
-            ++new_head.y;
+            ++current_state.snake_head.y;
             break;
         case 1: // move head up one tile
-            --new_head.y;
+            --current_state.snake_head.y;
             break;
         case 2: // move head left one tile
-            --new_head.x;
+            --current_state.snake_head.x;
             break;
         case 3: // move head right one tile
-            ++new_head.x;
+            ++current_state.snake_head.x;
             break;
     }
 
-    // check if the head of the snake is on the fruit,
-    // if it is, increase the snake length by one and spawn a new fruit
-    if ( same_point2d_int(new_head,current_state.fruit) ) {
+    // check if the head of the snake is on the fruit, if it is,
+    // increase the snake length by one and sets the flag to spawn a new fruit
+    bool new_fruit_needed{false};
+    if ( same_point2d_int(current_state.snake_head,current_state.fruit) ) {
         ++current_state.snake_length;
-        current_state.fruit = {
-            random_int(0,current_state.game_width-1),
-            random_int(0,current_state.game_height-1)
-        };
+        if (current_state.snake_length >= current_state.game_size) {
+            if (g_arg_skip_menu) win(current_state.snake_length);
+            else draw_win(current_state);
+        }
+        new_fruit_needed = true;
         if (current_state.speed > g_arg_max_speed) {
             current_state.speed -= g_arg_increment;
         }
@@ -130,8 +148,7 @@ void do_game_tick(Game_State& current_state) {
     // current_state.snake_length and snake_length_actual are unsigned ints)
     for (
         long unsigned int snake_length_actual{current_state.snake_body.size()};
-        snake_length_actual > current_state.snake_length-1;
-        // -1 because we haven't added the new head yet ^^
+        snake_length_actual > current_state.snake_length;
         snake_length_actual = current_state.snake_body.size()
     ) {
         current_state.snake_body.pop_back();
@@ -140,27 +157,41 @@ void do_game_tick(Game_State& current_state) {
     // if the new head should be where the snake body already is,
     // the snake is dead
     for (const auto& snake_segment : (current_state.snake_body)) {
-        if (same_point2d_int(new_head,snake_segment)) {
-            if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
-            else {
-                draw_death(current_state);
-            }
+        if (same_point2d_int(current_state.snake_head,snake_segment)) {
+        if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
+        else draw_death(current_state);
+
         }
     }
     // if the new head is outside the bounds, the snake is dead
     if (
-        new_head.x > current_state.game_width-1 ||
-        new_head.x < 0 ||
-        new_head.y > current_state.game_height-1 ||
-        new_head.y < 0
+        // < 1 instead of < 0 because of window border
+        current_state.snake_head.x > current_state.game_width ||
+        current_state.snake_head.x < 1 ||
+        current_state.snake_head.y > current_state.game_height ||
+        current_state.snake_head.y < 1
     ) {
         if (g_arg_skip_menu) death(current_state.snake_length); //print and final score and exit
-        else {
-            draw_death(current_state);
-        }
+        else draw_death(current_state);
+
     }
 
-    // attach the new head to the front of the snake
-    current_state.snake_body.emplace_front(new_head);
-
+    while (new_fruit_needed) {
+        // define a new fruit
+        current_state.fruit = {
+            // start from 1 instead of 0 because of window border
+            random_int(1,current_state.game_width),
+            random_int(1,current_state.game_height)
+        };
+        // new fruit no longer needed
+        new_fruit_needed = false;
+        // check if that spot is part of the snake
+        for (const auto& snake_segment : (current_state.snake_body)) {
+            // if it is, we need a new, new fruit
+            if (same_point2d_int(current_state.fruit, snake_segment)) {
+                new_fruit_needed = true;
+                break;
+            }
+        }
+    }
 }

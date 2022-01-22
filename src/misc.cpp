@@ -11,6 +11,12 @@ void death(int score) {
     std::exit(0);
 }
 
+void win(int score) {
+    endwin(); // deallocates memory and ends ncurses
+    std::cout << "You win! (score was: " << score << ")" << std::endl; // prints exit message
+    std::exit(0);
+}
+
 void sleep_milli(int milliseconds) {
     std::this_thread::sleep_for(std::chrono::milliseconds((milliseconds)));
 }
@@ -25,4 +31,10 @@ int random_int(int lower_bound, int upper_bound) {
 bool same_point2d_int(const Point2d_int& a, const Point2d_int& b) {
     if ((a.x == b.x) && (a.y == b.y)) return true;
     else return false;
+}
+
+void no_cheat(int) {
+    endwin(); // deallocates memory and ends ncurses
+    std::cout << "Resizing the terminal is cheating!" << std::endl;
+    std::exit(1);
 }
