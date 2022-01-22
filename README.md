@@ -3,7 +3,7 @@ Sea-Snake is a command-line implementation of the classic game "snake" written i
 
 It should compile with no issue on linux and mac assuming you have `g++`, `cmake` and `ncurses` installed, releases marked with "Cygwin Compatible" i was able to compile on windows using [Cygwin](https://www.cygwin.com/), but since it's dependent on `cygwin1.dll` i do not (yet) provide windows executables in the releases, alternatively, on windows you can build and run it in [WSL2](https://docs.microsoft.com/en-us/windows/wsl/about).
 
-## compilation instructions:
+## build instructions:
 Ensure you have `g++`, `cmake`, and `ncurses` installed:
 
 #### Linux:
