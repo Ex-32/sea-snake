@@ -9,7 +9,6 @@
 #include <thread> // for std::this_thread::sleep_until()
 #include <cstdlib> // for std::exit
 
-// for setlocale, initscr(), curs_set(), keypad(), noecho(), and nodelay()
 #include <ncurses.h>
 
 // for parsing command line arguments

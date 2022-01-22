@@ -61,7 +61,7 @@ void _print_body(const Game_State& current_state) {
             current_state.game_window,
             snake_segment.y,
             (snake_segment.x*2),
-            "%%%%" // "%%" but percent signes need to be escaped
+            "%%%%" // "%%" but percent signs need to be escaped
         );
     }
 }
