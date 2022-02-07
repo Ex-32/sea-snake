@@ -19,7 +19,7 @@ if you have the Xcode command line utils installed there's a decent chance you a
 brew install g++ cmake ncurses
 ```
 
-#### Then download or clone the code, and compile with cmake:
+#### Then download or clone the code, (downloding the latest release is recomended) and compile with cmake:
 ```bash
 # from .../sea-snake
 mkdir build
