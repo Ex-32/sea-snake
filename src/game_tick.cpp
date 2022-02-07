@@ -86,19 +86,27 @@ void do_game_tick(Game_State& current_state) {
     int new_facing{current_state.facing};
     for (int keycode{key_from_queue()}; keycode >= 0; keycode = key_from_queue()) {
         switch (keycode) {
-            case 258: // down arrow key
+            case KEY_DOWN:
+            case 'S':
+            case 's':
                 // if not facing up, now facing down
                 if (current_state.facing != 1) new_facing = 0;
                 break;
-            case 259: // up arrow key
+            case KEY_UP:
+            case 'W':
+            case 'w':
                 // if not facing down, now facing up
                 if (current_state.facing != 0) new_facing = 1;
                 break;
-            case 260: // left arrow key
+            case KEY_LEFT:
+            case 'A':
+            case 'a':
                 // if not facing right, now facing left
                 if (current_state.facing != 3) new_facing = 2;
                 break;
-            case 261: // right arrow key
+            case KEY_RIGHT:
+            case 'D':
+            case 'd':
                 // if not facing left, now facing right
                 if (current_state.facing != 2) new_facing = 3;
                 break;
