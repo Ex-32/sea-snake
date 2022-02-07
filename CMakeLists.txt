@@ -42,10 +42,7 @@ target_include_directories(sea-snake PRIVATE "./include")
 # must be defined for unicode ncurses to work on certain platforms
 # (looking at you apple)
 if (NOT NO_UNICODE)
-  target_compile_options(sea-snake PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>: /D_XOPEN_SOURCE_EXTENDED >
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -D_XOPEN_SOURCE_EXTENDED >
-  )
+  target_compile_options(sea-snake PRIVATE -D_XOPEN_SOURCE_EXTENDED )
 endif(NOT NO_UNICODE)
 
 # define NO_UNICODE in preprocessor,
@@ -59,24 +56,15 @@ target_link_libraries(sea-snake PRIVATE "${NCURSES_LIB}")
 
 # add warning flags
 if(WARNINGS)
-  target_compile_options(sea-snake PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>: /W4 >
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Wall -Wextra -Wpedantic >
-  )
+  target_compile_options(sea-snake PRIVATE -Wall -Wextra -Wpedantic )
 endif(WARNINGS)
 
 # add debug flags
 if(DEBUG)
-  target_compile_options(sea-snake PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>: /Od >
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Og >
-  )
+  target_compile_options(sea-snake PRIVATE -Og )
 endif(DEBUG)
 
 # add optimization flags
 if(OPTIMIZATIONS AND NOT DEBUG)
-  target_compile_options(sea-snake PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>: /O2 >
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -O2 >
-  )
+  target_compile_options(sea-snake PRIVATE -O2 )
 endif(OPTIMIZATIONS AND NOT DEBUG)
