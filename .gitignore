@@ -44,5 +44,5 @@ desktop.ini
 
 # Build directories
 build
-build-debug
+build-*
 out
