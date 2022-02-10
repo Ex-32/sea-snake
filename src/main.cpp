@@ -1,5 +1,5 @@
 
-#define VERSION "1.2.0"
+#define VERSION "1.3.0"
 #include "main.h"
 
 #ifndef NO_UNICODE
