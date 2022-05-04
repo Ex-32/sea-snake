@@ -24,12 +24,12 @@ brew install g++ cmake ncurses
 # from .../sea-snake
 mkdir build
 cd build
-cmake ..
+cmake -D CMAKE_BUILD_TYPE=Release ..
 make
 ```
 if your `ncurses` doesn't support unicode, you can compile without unicode using by adding the `NO_UNICODE` option to your cmake, like so:
 ```bash
-cmake .. -D NO_UNICODE=ON
+cmake -D CMAKE_BUILD_TYPE=Release -D NO_UNICODE=ON ..
 ```
 once it has compiled you can run it with:
 ```bash
