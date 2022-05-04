@@ -1,5 +1,5 @@
 
-#define VERSION "1.3.1"
+#define VERSION "1.4.0"
 #include "main.h"
 
 #ifndef NO_UNICODE
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 
         TCLAP::ValueArg<int> increment(
             "i", //short flag
-            "incremnet", //long flag
+            "increment", //long flag
             "how much to increase the speed of each frame by when a fruit is eaten", //description
             false, //required?
             10, //default
@@ -121,12 +121,12 @@ int main(int argc, char *argv[]) {
     if ( g_console_hight < 14 || g_console_width < 28) {
         endwin(); // deallocates memory and ends ncurses
         std::cerr << "A terminal Size of at least 28x14 is required :(" << std::endl;
-        std::exit(1);
+        std::exit(EXIT_FAILURE);
     }
     if ( (has_colors() == false) && g_arg_color_mode ) {
         endwin(); // deallocates memory and ends ncurses
-        std::cerr << "Your terminal deosn't support colors :(" << std::endl;
-        std::exit(1);
+        std::cerr << "Your terminal doesn't support colors :(" << std::endl;
+        std::exit(EXIT_FAILURE);
     }
 
     curs_set(0);           // hide cursor
@@ -135,10 +135,9 @@ int main(int argc, char *argv[]) {
     noecho();              // disable echoing back input
     nodelay(stdscr, TRUE); // make getch() calls non-blocking
 
-    // draw_init() returns true on sucessfull initialization and false otherwise
-    if (draw_init() == false) {
+    if (!draw_init()) {
         endwin(); // deallocates memory and ends ncurses
-        std::cout << "!! Funtion pointer assignemnt failed !! report this at:"
+        std::cout << "!! Function pointer assignment failed !! report this at:"
                      "\nhttps://github.com/Ex-32/sea-snake/issues" << std::endl;
         std::exit(-1);
     }
