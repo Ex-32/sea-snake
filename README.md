@@ -8,7 +8,7 @@ Ensure you have `g++`, `cmake`, and `ncurses` installed:
 
 #### Linux:
 ```bash
-sudo apt-get install g++ cmake libncurses-dev # Ubuntu or Debian
+sudo apt-get install g++ cmake libncurses-dev # Ubuntu
 apk add make cmake g++ ncurses-dev            # Alpine (run as root or sudo)
 ```
 if you use a different linux distro, your package manager probably has the same packages under the same or similar names, if not, you can find, build, and install them yourself.
